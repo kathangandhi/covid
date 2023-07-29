@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>COVID Daily Symptom Screening Survey</title>
+    <style>
+    body {
+        background-color: #232F3E;
+    }
+    label, button {
+        color: #FF9900;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+    input {
+        color: #232F3E;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 20px;
+    }
+    h1, p {
+        color: #FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    div {
+        padding: 10px;
+    }
+    </style>
+    <script>
+        // define the callAPI function that takes a first name and last name as parameters
+        var callAPI = (firstName, lastName, email, vaccine, symptoms)=>{
+            // instantiate a headers object
+            var myHeaders = new Headers();
+            // add content type header to object
+            myHeaders.append("Content-Type", "application/json");
+            // using built in JSON utility package turn object to string and store in a variable
+            var raw = JSON.stringify({
+                    "firstName":firstName,
+                    "lastName":lastName,
+                    "email":email,
+                    "vaccinated":vaccine,
+                    "symptoms":symptoms
+                });
+            // create a JSON object with parameters for API call and store in a variable
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            // make API call with parameters and use promises to get response
+            fetch("YOUR-LINK", requestOptions)
+            .then(response => response.text())
+            .then(result => alert(JSON.parse(result).body))
+            .catch(error => console.log('error', error));
+        }
+
+        function checkRadio(className) {
+            var vaccineInputs = document.getElementsByName(className);
+            for (let i = 0; i < vaccineInputs.length; i++) {
+                if (vaccineInputs[0].checked) {
+                    return vaccineInputs[0].value;
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h1><strong>CLAC COVID Demo</strong></h1>
+
+        <p>
+        This survey is intended for demonstration purposes only.
+        </p>
+    </div>
+
+    <form>
+        <div>
+            <label>First Name :</label>
+            <input type="text" id="fName">
+        </div>
+        <div>
+            <label>Last Name :</label>
+            <input type="text" id="lName">
+        </div>
+        <div>
+            <label>Enter your email :</label>
+            <input type="email" id="email">
+        </div>
+        <div>
+            <label>Vaccinated? :</label>
+            <input type="radio" id="vaccineYes" name="vaccine" value="Yes">
+            <label for="vaccineYes">Yes</label>
+            <input type="radio" id="vaccineNo" name="vaccine" value="No">
+            <label for="vaccineNo">No</label>
+        </div>
+
+        <div>
+            <label>Symptoms? :</label>
+            <input type="radio" id="symptomsYes" name="symptoms" value="Yes">
+            <label for="symptomsYes">Yes</label>
+            <input type="radio" id="symptomsNo" name="symptoms" value="No">
+            <label for="symptomsNo">No</label>
+        </div>
+        <!-- set button onClick method to call function we defined passing input values as parameters -->
+        <div>
+            <button type="button" onclick="callAPI(document.getElementById('fName').value, document.getElementById('lName').value, document.getElementById('email').value, checkRadio('vaccine'), checkRadio('symptoms'))">Submit</button>
+        </div>
+    </form>
+</body>
+</html>
